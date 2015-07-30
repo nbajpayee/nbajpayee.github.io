@@ -31,1009 +31,1009 @@ google.maps.event.addDomListener(window, 'load', initialize);
     &destinations=Gurgaon+India"></iframe>
 
 
-    "public class GoogleMapsRapidExtractor {
-
-   // Given symbol, get HTML
-    private static String readHTML(String origin, String destination) {
-        In page = new In("https://maps.googleapis.com/maps/api/distancematrix/xml?origins="
-                             + origin + "&destinations=" + destination);
-        String html = page.readAll();
-        
-        String distanceAndTime = convert(html, origin, destination);
-        return distanceAndTime;
-    }
-    
-    private static String convert(String wholeText, String origin, String destination) {
-        
-        // strings that indicate what surrounds relevant text we need
-        // which is in this case the distance and time
-        String delimiterBeg = "<text>";
-        String delimiterEnd = "</text>";
-        
-        // finds the index of where the relevant text markers begin for time
-        int timeIndexBeg = wholeText.indexOf(delimiterBeg) + delimiterBeg.length();
-        int timeIndexEnd = wholeText.indexOf(delimiterEnd);
-        
-        // finds the index of where the relevant text markers begin for distance
-        int distIndexBeg = wholeText.indexOf(delimiterBeg, timeIndexBeg + 1) + delimiterBeg.length();
-        int distIndexEnd = wholeText.indexOf(delimiterEnd, timeIndexEnd + 1);
-        
-        
-        String time;
-        String distance;
-        
-        if (timeIndexBeg < 0 || timeIndexEnd < 0)
-        {
-            time = "ERROR";
-            distance = "ERROR";
-        }
-        else
-        {
-            time = wholeText.substring(timeIndexBeg,timeIndexEnd);
-            distance = wholeText.substring (distIndexBeg, distIndexEnd);
-        }
-
-        return origin + ";" + destination + ";" + time + ";" + distance;
-    }
-    
-    public static void main(String[] args) {
-        
-        System.out.println("Origin;Location;Time;Distance");
-        
-        while (!StdIn.isEmpty())
-        {
-            String origin = StdIn.readString();
-            String destination = StdIn.readString();
-            System.out.println(readHTML(origin, destination));
-        }
-    }
+    "public class GoogleMapsRapidExtractor {<br />
+<br />
+   // Given symbol, get HTML<br />
+    private static String readHTML(String origin, String destination) {<br />
+        In page = new In("https://maps.googleapis.com/maps/api/distancematrix/xml?origins="<br />
+                             + origin + "&destinations=" + destination);<br />
+        String html = page.readAll();<br />
+        <br />
+        String distanceAndTime = convert(html, origin, destination);<br />
+        return distanceAndTime;<br />
+    }<br />
+    <br />
+    private static String convert(String wholeText, String origin, String destination) {<br />
+        <br />
+        // strings that indicate what surrounds relevant text we need<br />
+        // which is in this case the distance and time<br />
+        String delimiterBeg = "<text>";<br />
+        String delimiterEnd = "</text>";<br />
+        <br />
+        // finds the index of where the relevant text markers begin for time<br />
+        int timeIndexBeg = wholeText.indexOf(delimiterBeg) + delimiterBeg.length();<br />
+        int timeIndexEnd = wholeText.indexOf(delimiterEnd);<br />
+        <br />
+        // finds the index of where the relevant text markers begin for distance<br />
+        int distIndexBeg = wholeText.indexOf(delimiterBeg, timeIndexBeg + 1) + delimiterBeg.length();<br />
+        int distIndexEnd = wholeText.indexOf(delimiterEnd, timeIndexEnd + 1);<br />
+        <br />
+        <br />
+        String time;<br />
+        String distance;<br />
+        <br />
+        if (timeIndexBeg < 0 || timeIndexEnd < 0)<br />
+        {<br />
+            time = "ERROR";<br />
+            distance = "ERROR";<br />
+        }<br />
+        else<br />
+        {<br />
+            time = wholeText.substring(timeIndexBeg,timeIndexEnd);<br />
+            distance = wholeText.substring (distIndexBeg, distIndexEnd);<br />
+        }<br />
+<br />
+        return origin + ";" + destination + ";" + time + ";" + distance;<br />
+    }<br />
+    <br />
+    public static void main(String[] args) {<br />
+        <br />
+        System.out.println("Origin;Location;Time;Distance");<br />
+        <br />
+        while (!StdIn.isEmpty())<br />
+        {<br />
+            String origin = StdIn.readString();<br />
+            String destination = StdIn.readString();<br />
+            System.out.println(readHTML(origin, destination));<br />
+        }<br />
+    }<br />
 }"
 
 <br>
 <br>
 
-"/*************************************************************************
- *  Compilation:  javac In.java
- *  Execution:    java In   (basic test --- see source for required files)
- *  Dependencies: none
- *
- *  Reads in data of various types from standard input, files, and URLs.
- *
- *************************************************************************/
-
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-// import java.net.HttpURLConnection;
-import java.net.URLConnection;
-import java.util.ArrayList;
-import java.util.InputMismatchException;
-import java.util.Locale;
-import java.util.NoSuchElementException;
-import java.util.Scanner;
-import java.util.regex.Pattern;
-
-/**
- *  <i>Input</i>. This class provides methods for reading strings
- *  and numbers from standard input, file input, URLs, and sockets. 
- *  <p>
- *  The Locale used is: language = English, country = US. This is consistent
- *  with the formatting conventions with Java floating-point literals,
- *  command-line arguments (via {@link Double#parseDouble(String)})
- *  and standard output. 
- *  <p>
- *  For additional documentation, see 
- *  <a href="http://introcs.cs.princeton.edu/31datatype">Section 3.1</a> of
- *  <i>Introduction to Programming in Java: An Interdisciplinary Approach</i> 
- *  by Robert Sedgewick and Kevin Wayne.
- *  <p>
- *  Like {@link Scanner}, reading a token also consumes preceding Java
- *  whitespace, reading a full line consumes
- *  the following end-of-line delimeter, while reading a character consumes
- *  nothing extra. 
- *  <p>
- *  Whitespace is defined in {@link Character#isWhitespace(char)}. Newlines
- *  consist of \n, \r, \r\n, and Unicode hex code points 0x2028, 0x2029, 0x0085;
- *  see <tt><a href="http://www.docjar.com/html/api/java/util/Scanner.java.html">
- *  Scanner.java</a></tt> (NB: Java 6u23 and earlier uses only \r, \r, \r\n).
- *
- *  @author David Pritchard
- *  @author Robert Sedgewick
- *  @author Kevin Wayne
- */
-public final class In {
-    
-    /*** begin: section (1 of 2) of code duplicated from In to StdIn. */
-    
-    // assume Unicode UTF-8 encoding
-    private static final String CHARSET_NAME = "UTF-8";
-
-    // assume language = English, country = US for consistency with System.out.
-    private static final Locale LOCALE = Locale.US;
-
-    // the default token separator; we maintain the invariant that this value 
-    // is held by the scanner's delimiter between calls
-    private static final Pattern WHITESPACE_PATTERN
-        = Pattern.compile("\\p{javaWhitespace}+");
-
-    // makes whitespace characters significant 
-    private static final Pattern EMPTY_PATTERN
-        = Pattern.compile("");
-
-    // used to read the entire input. source:
-    // http://weblogs.java.net/blog/pat/archive/2004/10/stupid_scanner_1.html
-    private static final Pattern EVERYTHING_PATTERN
-        = Pattern.compile("\\A");
-
-    /*** end: section (1 of 2) of code duplicated from In to StdIn. */
-
-    private Scanner scanner;
-
-   /**
-     * Create an input stream from standard input.
-     */
-    public In() {
-        scanner = new Scanner(new BufferedInputStream(System.in), CHARSET_NAME);
-        scanner.useLocale(LOCALE);
-    }
-
-   /**
-     * Create an input stream from a socket.
-     */
-    public In(java.net.Socket socket) {
-        try {
-            InputStream is = socket.getInputStream();
-            scanner = new Scanner(new BufferedInputStream(is), CHARSET_NAME);
-            scanner.useLocale(LOCALE);
-        }
-        catch (IOException ioe) {
-            System.err.println("Could not open " + socket);
-        }
-    }
-
-   /**
-     * Create an input stream from a URL.
-     */
-    public In(URL url) {
-        try {
-            URLConnection site = url.openConnection();
-            InputStream is     = site.getInputStream();
-            scanner            = new Scanner(new BufferedInputStream(is), CHARSET_NAME);
-            scanner.useLocale(LOCALE);
-        }
-        catch (IOException ioe) {
-            System.err.println("Could not open " + url);
-        }
-    }
-
-   /**
-     * Create an input stream from a file.
-     */
-    public In(File file) {
-        try {
-            scanner = new Scanner(file, CHARSET_NAME);
-            scanner.useLocale(LOCALE);
-        }
-        catch (IOException ioe) {
-            System.err.println("Could not open " + file);
-        }
-    }
-
-
-   /**
-     * Create an input stream from a filename or web page name.
-     */
-    public In(String s) {
-        try {
-            // first try to read file from local file system
-            File file = new File(s);
-            if (file.exists()) {
-                scanner = new Scanner(file, CHARSET_NAME);
-                scanner.useLocale(LOCALE);
-                return;
-            }
-
-            // next try for files included in jar
-            URL url = getClass().getResource(s);
-
-            // or URL from web
-            if (url == null) {
-                url = new URL(s);
-            }
-
-            URLConnection site = url.openConnection();
-
-            // in order to set User-Agent, replace above line with these two
-            // HttpURLConnection site = (HttpURLConnection) url.openConnection();
-            // site.addRequestProperty("User-Agent", "Mozilla/4.76");
-
-            InputStream is     = site.getInputStream();
-            scanner            = new Scanner(new BufferedInputStream(is), CHARSET_NAME);
-            scanner.useLocale(LOCALE);
-        }
-        catch (IOException ioe) {
-            System.err.println("Could not open " + s);
-        }
-    }
-
-    /**
-     * Create an input stream from a given Scanner source; use with 
-     * <tt>new Scanner(String)</tt> to read from a string.
-     * <p>
-     * Note that this does not create a defensive copy, so the
-     * scanner will be mutated as you read on. 
-     */
-    public In(Scanner scanner) {
-        this.scanner = scanner;
-    }
-
-    /**
-     * Does the input stream exist?
-     */
-    public boolean exists()  {
-        return scanner != null;
-    }
-    
-    /*** begin: section (2 of 2) of code duplicated from In to StdIn,
-      *  with all methods changed from "public" to "public static". ***/
-
-   /**
-     * Is the input empty (except possibly for whitespace)? Use this
-     * to know whether the next call to {@link #readString()}, 
-     * {@link #readDouble()}, etc will succeed.
-     */
-    public boolean isEmpty() {
-        return !scanner.hasNext();
-    }
-
-   /**
-     * Does the input have a next line? Use this to know whether the
-     * next call to {@link #readLine()} will succeed. <p> Functionally
-     * equivalent to {@link #hasNextChar()}.
-     */
-    public boolean hasNextLine() {
-        return scanner.hasNextLine();
-    }
-
-    /**
-     * Is the input empty (including whitespace)? Use this to know 
-     * whether the next call to {@link #readChar()} will succeed. <p> Functionally
-     * equivalent to {@link #hasNextLine()}.
-     */
-    public boolean hasNextChar() {
-        scanner.useDelimiter(EMPTY_PATTERN);
-        boolean result = scanner.hasNext();
-        scanner.useDelimiter(WHITESPACE_PATTERN);
-        return result;
-    }
-
-
-   /**
-     * Read and return the next line.
-     */
-    public String readLine() {
-        String line;
-        try {
-            line = scanner.nextLine();
-        }
-        catch (NoSuchElementException e) {
-            line = null;
-        }
-        return line;
-    }
-
-    /**
-     * Read and return the next character.
-     */
-    public char readChar() {
-        scanner.useDelimiter(EMPTY_PATTERN);
-        String ch = scanner.next();
-        assert (ch.length() == 1) : "Internal (Std)In.readChar() error!"
-            + " Please contact the authors.";
-        scanner.useDelimiter(WHITESPACE_PATTERN);
-        return ch.charAt(0);
-    }  
-
-
-   /**
-     * Read and return the remainder of the input as a string.
-     */
-    public String readAll() {
-        if (!scanner.hasNextLine())
-            return "";
-
-        String result = scanner.useDelimiter(EVERYTHING_PATTERN).next();
-        // not that important to reset delimeter, since now scanner is empty
-        scanner.useDelimiter(WHITESPACE_PATTERN); // but let's do it anyway
-        return result;
-    }
-
-
-   /**
-     * Read and return the next string.
-     */
-    public String readString() {
-        return scanner.next();
-    }
-
-   /**
-     * Read and return the next int.
-     */
-    public int readInt() {
-        return scanner.nextInt();
-    }
-
-   /**
-     * Read and return the next double.
-     */
-    public double readDouble() {
-        return scanner.nextDouble();
-    }
-
-   /**
-     * Read and return the next float.
-     */
-    public float readFloat() {
-        return scanner.nextFloat();
-    }
-
-   /**
-     * Read and return the next long.
-     */
-    public long readLong() {
-        return scanner.nextLong();
-    }
-
-   /**
-     * Read and return the next short.
-     */
-    public short readShort() {
-        return scanner.nextShort();
-    }
-
-   /**
-     * Read and return the next byte.
-     */
-    public byte readByte() {
-        return scanner.nextByte();
-    }
-
-    /**
-     * Read and return the next boolean, allowing case-insensitive
-     * "true" or "1" for true, and "false" or "0" for false.
-     */
-    public boolean readBoolean() {
-        String s = readString();
-        if (s.equalsIgnoreCase("true"))  return true;
-        if (s.equalsIgnoreCase("false")) return false;
-        if (s.equals("1"))               return true;
-        if (s.equals("0"))               return false;
-        throw new InputMismatchException();
-    }
-
-    /**
-     * Read all strings until the end of input is reached, and return them.
-     */
-    public String[] readAllStrings() {
-        // we could use readAll.trim().split(), but that's not consistent
-        // since trim() uses characters 0x00..0x20 as whitespace
-        String[] tokens = WHITESPACE_PATTERN.split(readAll());
-        if (tokens.length == 0 || tokens[0].length() > 0)
-            return tokens;
-        String[] decapitokens = new String[tokens.length-1];
-        for (int i = 0; i < tokens.length-1; i++)
-            decapitokens[i] = tokens[i+1];
-        return decapitokens;
-    }
-
-    /**
-     * Reads all remaining lines from input stream and returns them as an array of strings.
-     * @return all remaining lines on input stream, as an array of strings
-     */
-    public String[] readAllLines() {
-        ArrayList<String> lines = new ArrayList<String>();
-        while (hasNextLine()) {
-            lines.add(readLine());
-        }
-        return lines.toArray(new String[0]);
-    }
-
-
-    /**
-     * Read all ints until the end of input is reached, and return them.
-     */
-    public int[] readAllInts() {
-        String[] fields = readAllStrings();
-        int[] vals = new int[fields.length];
-        for (int i = 0; i < fields.length; i++)
-            vals[i] = Integer.parseInt(fields[i]);
-        return vals;
-    }
-
-    /**
-     * Read all doubles until the end of input is reached, and return them.
-     */
-    public double[] readAllDoubles() {
-        String[] fields = readAllStrings();
-        double[] vals = new double[fields.length];
-        for (int i = 0; i < fields.length; i++)
-            vals[i] = Double.parseDouble(fields[i]);
-        return vals;
-    }
-    
-    /*** end: section (2 of 2) of code duplicated from In to StdIn */
-    
-   /**
-     * Close the input stream.
-     */
-    public void close() {
-        scanner.close();  
-    }
-
-    /**
-     * Reads all ints from a file.
-     * @deprecated Clearer to use 
-     * <tt>new In(filename)</tt>.{@link #readAllInts()}
-     */
-    public static int[] readInts(String filename) {
-        return new In(filename).readAllInts();
-    }
-
-   /**
-     * Reads all doubles from a file.
-     * @deprecated Clearer to use 
-     * <tt>new In(filename)</tt>.{@link #readAllDoubles()}
-     */
-    public static double[] readDoubles(String filename) {
-        return new In(filename).readAllDoubles();
-    }
-
-   /**
-     * Reads all strings from a file.
-     * @deprecated Clearer to use 
-     * <tt>new In(filename)</tt>.{@link #readAllStrings()}
-     */
-    public static String[] readStrings(String filename) {
-        return new In(filename).readAllStrings();
-    }
-
-    /**
-     * Reads all ints from standard input.
-     * @deprecated Clearer to use {@link StdIn#readAllInts()}
-     */
-    public static int[] readInts() {
-        return new In().readAllInts();
-    }
-
-   /**
-     * Reads all doubles from standard input.
-     * @deprecated Clearer to use {@link StdIn#readAllDoubles()}
-     */
-    public static double[] readDoubles() {
-        return new In().readAllDoubles();
-    }
-
-   /**
-     * Reads all strings from standard input.
-     * @deprecated Clearer to use {@link StdIn#readAllStrings()}
-     */
-    public static String[] readStrings() {
-        return new In().readAllStrings();
-    }
-    
-   /**
-     * Test client.
-     */
-    public static void main(String[] args) {
-        In in;
-        String urlName = "http://introcs.cs.princeton.edu/stdlib/InTest.txt";
-
-        // read from a URL
-        System.out.println("readAll() from URL " + urlName);
-        System.out.println("---------------------------------------------------------------------------");
-        try {
-            in = new In(urlName);
-            System.out.println(in.readAll());
-        }
-        catch (Exception e) {
-            System.out.println(e);
-        }
-        System.out.println();
-
-        // read one line at a time from URL
-        System.out.println("readLine() from URL " + urlName);
-        System.out.println("---------------------------------------------------------------------------");
-        try {
-            in = new In(urlName);
-            while (!in.isEmpty()) {
-                String s = in.readLine();
-                System.out.println(s);
-            }
-        }
-        catch (Exception e) {
-            System.out.println(e);
-        }
-        System.out.println();
-
-        // read one string at a time from URL
-        System.out.println("readString() from URL " + urlName);
-        System.out.println("---------------------------------------------------------------------------");
-        try {
-            in = new In(urlName);
-            while (!in.isEmpty()) {
-                String s = in.readString();
-                System.out.println(s);
-            }
-        }
-        catch (Exception e) {
-            System.out.println(e);
-        }
-        System.out.println();
-
-
-        // read one line at a time from file in current directory
-        System.out.println("readLine() from current directory");
-        System.out.println("---------------------------------------------------------------------------");
-        try {
-            in = new In("./InTest.txt");
-            while (!in.isEmpty()) {
-                String s = in.readLine();
-                System.out.println(s);
-            }
-        }
-        catch (Exception e) {
-            System.out.println(e);
-        }
-        System.out.println();
-
-
-        // read one line at a time from file using relative path
-        System.out.println("readLine() from relative path");
-        System.out.println("---------------------------------------------------------------------------");
-        try {
-            in = new In("../stdlib/InTest.txt");
-            while (!in.isEmpty()) {
-                String s = in.readLine();
-                System.out.println(s);
-            }
-        }
-        catch (Exception e) {
-            System.out.println(e);
-        }
-        System.out.println();
-
-        // read one char at a time
-        System.out.println("readChar() from file");
-        System.out.println("---------------------------------------------------------------------------");
-        try {
-            in = new In("InTest.txt");
-            while (!in.isEmpty()) {
-                char c = in.readChar();
-                System.out.print(c);
-            }
-        }
-        catch (Exception e) {
-            System.out.println(e);
-        }
-        System.out.println();
-        System.out.println();
-
-        // read one line at a time from absolute OS X / Linux path
-        System.out.println("readLine() from absolute OS X / Linux path");
-        System.out.println("---------------------------------------------------------------------------");
-        in = new In("/n/fs/introcs/www/java/stdlib/InTest.txt");
-        try {
-            while (!in.isEmpty()) {
-                String s = in.readLine();
-                System.out.println(s);
-            }
-        }
-        catch (Exception e) {
-            System.out.println(e);
-        }
-        System.out.println();
-
-
-        // read one line at a time from absolute Windows path
-        System.out.println("readLine() from absolute Windows path");
-        System.out.println("---------------------------------------------------------------------------");
-        try {
-            in = new In("G:\\www\\introcs\\stdlib\\InTest.txt");
-            while (!in.isEmpty()) {
-                String s = in.readLine();
-                System.out.println(s);
-            }
-            System.out.println();
-        }
-        catch (Exception e) {
-            System.out.println(e);
-        }
-        System.out.println();
-
-    }
-
+"/*************************************************************************<br />
+ *  Compilation:  javac In.java<br />
+ *  Execution:    java In   (basic test --- see source for required files)<br />
+ *  Dependencies: none<br />
+ *<br />
+ *  Reads in data of various types from standard input, files, and URLs.<br />
+ *<br />
+ *************************************************************************/<br />
+<br />
+import java.io.BufferedInputStream;<br />
+import java.io.File;<br />
+import java.io.IOException;<br />
+import java.io.InputStream;<br />
+import java.net.URL;<br />
+// import java.net.HttpURLConnection;<br />
+import java.net.URLConnection;<br />
+import java.util.ArrayList;<br />
+import java.util.InputMismatchException;<br />
+import java.util.Locale;<br />
+import java.util.NoSuchElementException;<br />
+import java.util.Scanner;<br />
+import java.util.regex.Pattern;<br />
+<br />
+/**<br />
+ *  &lt;i&gt;Input&lt;/i&gt;. This class provides methods for reading strings<br />
+ *  and numbers from standard input, file input, URLs, and sockets. <br />
+ *  &lt;p&gt;<br />
+ *  The Locale used is: language = English, country = US. This is consistent<br />
+ *  with the formatting conventions with Java floating-point literals,<br />
+ *  command-line arguments (via {@link Double#parseDouble(String)})<br />
+ *  and standard output. <br />
+ *  &lt;p&gt;<br />
+ *  For additional documentation, see <br />
+ *  &lt;a href=&quot;http://introcs.cs.princeton.edu/31datatype&quot;&gt;Section 3.1&lt;/a&gt; of<br />
+ *  &lt;i&gt;Introduction to Programming in Java: An Interdisciplinary Approach&lt;/i&gt; <br />
+ *  by Robert Sedgewick and Kevin Wayne.<br />
+ *  &lt;p&gt;<br />
+ *  Like {@link Scanner}, reading a token also consumes preceding Java<br />
+ *  whitespace, reading a full line consumes<br />
+ *  the following end-of-line delimeter, while reading a character consumes<br />
+ *  nothing extra. <br />
+ *  &lt;p&gt;<br />
+ *  Whitespace is defined in {@link Character#isWhitespace(char)}. Newlines<br />
+ *  consist of n, r, rn, and Unicode hex code points 0x2028, 0x2029, 0x0085;<br />
+ *  see &lt;tt&gt;&lt;a href=&quot;http://www.docjar.com/html/api/java/util/Scanner.java.html&quot;&gt;<br />
+ *  Scanner.java&lt;/a&gt;&lt;/tt&gt; (NB: Java 6u23 and earlier uses only r, r, rn).<br />
+ *<br />
+ *  @author David Pritchard<br />
+ *  @author Robert Sedgewick<br />
+ *  @author Kevin Wayne<br />
+ */<br />
+public final class In {<br />
+    <br />
+    /*** begin: section (1 of 2) of code duplicated from In to StdIn. */<br />
+    <br />
+    // assume Unicode UTF-8 encoding<br />
+    private static final String CHARSET_NAME = &quot;UTF-8&quot;;<br />
+<br />
+    // assume language = English, country = US for consistency with System.out.<br />
+    private static final Locale LOCALE = Locale.US;<br />
+<br />
+    // the default token separator; we maintain the invariant that this value <br />
+    // is held by the scanner's delimiter between calls<br />
+    private static final Pattern WHITESPACE_PATTERN<br />
+        = Pattern.compile(&quot;p{javaWhitespace}+&quot;);<br />
+<br />
+    // makes whitespace characters significant <br />
+    private static final Pattern EMPTY_PATTERN<br />
+        = Pattern.compile(&quot;&quot;);<br />
+<br />
+    // used to read the entire input. source:<br />
+    // http://weblogs.java.net/blog/pat/archive/2004/10/stupid_scanner_1.html<br />
+    private static final Pattern EVERYTHING_PATTERN<br />
+        = Pattern.compile(&quot;A&quot;);<br />
+<br />
+    /*** end: section (1 of 2) of code duplicated from In to StdIn. */<br />
+<br />
+    private Scanner scanner;<br />
+<br />
+   /**<br />
+     * Create an input stream from standard input.<br />
+     */<br />
+    public In() {<br />
+        scanner = new Scanner(new BufferedInputStream(System.in), CHARSET_NAME);<br />
+        scanner.useLocale(LOCALE);<br />
+    }<br />
+<br />
+   /**<br />
+     * Create an input stream from a socket.<br />
+     */<br />
+    public In(java.net.Socket socket) {<br />
+        try {<br />
+            InputStream is = socket.getInputStream();<br />
+            scanner = new Scanner(new BufferedInputStream(is), CHARSET_NAME);<br />
+            scanner.useLocale(LOCALE);<br />
+        }<br />
+        catch (IOException ioe) {<br />
+            System.err.println(&quot;Could not open &quot; + socket);<br />
+        }<br />
+    }<br />
+<br />
+   /**<br />
+     * Create an input stream from a URL.<br />
+     */<br />
+    public In(URL url) {<br />
+        try {<br />
+            URLConnection site = url.openConnection();<br />
+            InputStream is     = site.getInputStream();<br />
+            scanner            = new Scanner(new BufferedInputStream(is), CHARSET_NAME);<br />
+            scanner.useLocale(LOCALE);<br />
+        }<br />
+        catch (IOException ioe) {<br />
+            System.err.println(&quot;Could not open &quot; + url);<br />
+        }<br />
+    }<br />
+<br />
+   /**<br />
+     * Create an input stream from a file.<br />
+     */<br />
+    public In(File file) {<br />
+        try {<br />
+            scanner = new Scanner(file, CHARSET_NAME);<br />
+            scanner.useLocale(LOCALE);<br />
+        }<br />
+        catch (IOException ioe) {<br />
+            System.err.println(&quot;Could not open &quot; + file);<br />
+        }<br />
+    }<br />
+<br />
+<br />
+   /**<br />
+     * Create an input stream from a filename or web page name.<br />
+     */<br />
+    public In(String s) {<br />
+        try {<br />
+            // first try to read file from local file system<br />
+            File file = new File(s);<br />
+            if (file.exists()) {<br />
+                scanner = new Scanner(file, CHARSET_NAME);<br />
+                scanner.useLocale(LOCALE);<br />
+                return;<br />
+            }<br />
+<br />
+            // next try for files included in jar<br />
+            URL url = getClass().getResource(s);<br />
+<br />
+            // or URL from web<br />
+            if (url == null) {<br />
+                url = new URL(s);<br />
+            }<br />
+<br />
+            URLConnection site = url.openConnection();<br />
+<br />
+            // in order to set User-Agent, replace above line with these two<br />
+            // HttpURLConnection site = (HttpURLConnection) url.openConnection();<br />
+            // site.addRequestProperty(&quot;User-Agent&quot;, &quot;Mozilla/4.76&quot;);<br />
+<br />
+            InputStream is     = site.getInputStream();<br />
+            scanner            = new Scanner(new BufferedInputStream(is), CHARSET_NAME);<br />
+            scanner.useLocale(LOCALE);<br />
+        }<br />
+        catch (IOException ioe) {<br />
+            System.err.println(&quot;Could not open &quot; + s);<br />
+        }<br />
+    }<br />
+<br />
+    /**<br />
+     * Create an input stream from a given Scanner source; use with <br />
+     * &lt;tt&gt;new Scanner(String)&lt;/tt&gt; to read from a string.<br />
+     * &lt;p&gt;<br />
+     * Note that this does not create a defensive copy, so the<br />
+     * scanner will be mutated as you read on. <br />
+     */<br />
+    public In(Scanner scanner) {<br />
+        this.scanner = scanner;<br />
+    }<br />
+<br />
+    /**<br />
+     * Does the input stream exist?<br />
+     */<br />
+    public boolean exists()  {<br />
+        return scanner != null;<br />
+    }<br />
+    <br />
+    /*** begin: section (2 of 2) of code duplicated from In to StdIn,<br />
+      *  with all methods changed from &quot;public&quot; to &quot;public static&quot;. ***/<br />
+<br />
+   /**<br />
+     * Is the input empty (except possibly for whitespace)? Use this<br />
+     * to know whether the next call to {@link #readString()}, <br />
+     * {@link #readDouble()}, etc will succeed.<br />
+     */<br />
+    public boolean isEmpty() {<br />
+        return !scanner.hasNext();<br />
+    }<br />
+<br />
+   /**<br />
+     * Does the input have a next line? Use this to know whether the<br />
+     * next call to {@link #readLine()} will succeed. &lt;p&gt; Functionally<br />
+     * equivalent to {@link #hasNextChar()}.<br />
+     */<br />
+    public boolean hasNextLine() {<br />
+        return scanner.hasNextLine();<br />
+    }<br />
+<br />
+    /**<br />
+     * Is the input empty (including whitespace)? Use this to know <br />
+     * whether the next call to {@link #readChar()} will succeed. &lt;p&gt; Functionally<br />
+     * equivalent to {@link #hasNextLine()}.<br />
+     */<br />
+    public boolean hasNextChar() {<br />
+        scanner.useDelimiter(EMPTY_PATTERN);<br />
+        boolean result = scanner.hasNext();<br />
+        scanner.useDelimiter(WHITESPACE_PATTERN);<br />
+        return result;<br />
+    }<br />
+<br />
+<br />
+   /**<br />
+     * Read and return the next line.<br />
+     */<br />
+    public String readLine() {<br />
+        String line;<br />
+        try {<br />
+            line = scanner.nextLine();<br />
+        }<br />
+        catch (NoSuchElementException e) {<br />
+            line = null;<br />
+        }<br />
+        return line;<br />
+    }<br />
+<br />
+    /**<br />
+     * Read and return the next character.<br />
+     */<br />
+    public char readChar() {<br />
+        scanner.useDelimiter(EMPTY_PATTERN);<br />
+        String ch = scanner.next();<br />
+        assert (ch.length() == 1) : &quot;Internal (Std)In.readChar() error!&quot;<br />
+            + &quot; Please contact the authors.&quot;;<br />
+        scanner.useDelimiter(WHITESPACE_PATTERN);<br />
+        return ch.charAt(0);<br />
+    }  <br />
+<br />
+<br />
+   /**<br />
+     * Read and return the remainder of the input as a string.<br />
+     */<br />
+    public String readAll() {<br />
+        if (!scanner.hasNextLine())<br />
+            return &quot;&quot;;<br />
+<br />
+        String result = scanner.useDelimiter(EVERYTHING_PATTERN).next();<br />
+        // not that important to reset delimeter, since now scanner is empty<br />
+        scanner.useDelimiter(WHITESPACE_PATTERN); // but let's do it anyway<br />
+        return result;<br />
+    }<br />
+<br />
+<br />
+   /**<br />
+     * Read and return the next string.<br />
+     */<br />
+    public String readString() {<br />
+        return scanner.next();<br />
+    }<br />
+<br />
+   /**<br />
+     * Read and return the next int.<br />
+     */<br />
+    public int readInt() {<br />
+        return scanner.nextInt();<br />
+    }<br />
+<br />
+   /**<br />
+     * Read and return the next double.<br />
+     */<br />
+    public double readDouble() {<br />
+        return scanner.nextDouble();<br />
+    }<br />
+<br />
+   /**<br />
+     * Read and return the next float.<br />
+     */<br />
+    public float readFloat() {<br />
+        return scanner.nextFloat();<br />
+    }<br />
+<br />
+   /**<br />
+     * Read and return the next long.<br />
+     */<br />
+    public long readLong() {<br />
+        return scanner.nextLong();<br />
+    }<br />
+<br />
+   /**<br />
+     * Read and return the next short.<br />
+     */<br />
+    public short readShort() {<br />
+        return scanner.nextShort();<br />
+    }<br />
+<br />
+   /**<br />
+     * Read and return the next byte.<br />
+     */<br />
+    public byte readByte() {<br />
+        return scanner.nextByte();<br />
+    }<br />
+<br />
+    /**<br />
+     * Read and return the next boolean, allowing case-insensitive<br />
+     * &quot;true&quot; or &quot;1&quot; for true, and &quot;false&quot; or &quot;0&quot; for false.<br />
+     */<br />
+    public boolean readBoolean() {<br />
+        String s = readString();<br />
+        if (s.equalsIgnoreCase(&quot;true&quot;))  return true;<br />
+        if (s.equalsIgnoreCase(&quot;false&quot;)) return false;<br />
+        if (s.equals(&quot;1&quot;))               return true;<br />
+        if (s.equals(&quot;0&quot;))               return false;<br />
+        throw new InputMismatchException();<br />
+    }<br />
+<br />
+    /**<br />
+     * Read all strings until the end of input is reached, and return them.<br />
+     */<br />
+    public String[] readAllStrings() {<br />
+        // we could use readAll.trim().split(), but that's not consistent<br />
+        // since trim() uses characters 0x00..0x20 as whitespace<br />
+        String[] tokens = WHITESPACE_PATTERN.split(readAll());<br />
+        if (tokens.length == 0 || tokens[0].length() &gt; 0)<br />
+            return tokens;<br />
+        String[] decapitokens = new String[tokens.length-1];<br />
+        for (int i = 0; i &lt; tokens.length-1; i++)<br />
+            decapitokens[i] = tokens[i+1];<br />
+        return decapitokens;<br />
+    }<br />
+<br />
+    /**<br />
+     * Reads all remaining lines from input stream and returns them as an array of strings.<br />
+     * @return all remaining lines on input stream, as an array of strings<br />
+     */<br />
+    public String[] readAllLines() {<br />
+        ArrayList&lt;String&gt; lines = new ArrayList&lt;String&gt;();<br />
+        while (hasNextLine()) {<br />
+            lines.add(readLine());<br />
+        }<br />
+        return lines.toArray(new String[0]);<br />
+    }<br />
+<br />
+<br />
+    /**<br />
+     * Read all ints until the end of input is reached, and return them.<br />
+     */<br />
+    public int[] readAllInts() {<br />
+        String[] fields = readAllStrings();<br />
+        int[] vals = new int[fields.length];<br />
+        for (int i = 0; i &lt; fields.length; i++)<br />
+            vals[i] = Integer.parseInt(fields[i]);<br />
+        return vals;<br />
+    }<br />
+<br />
+    /**<br />
+     * Read all doubles until the end of input is reached, and return them.<br />
+     */<br />
+    public double[] readAllDoubles() {<br />
+        String[] fields = readAllStrings();<br />
+        double[] vals = new double[fields.length];<br />
+        for (int i = 0; i &lt; fields.length; i++)<br />
+            vals[i] = Double.parseDouble(fields[i]);<br />
+        return vals;<br />
+    }<br />
+    <br />
+    /*** end: section (2 of 2) of code duplicated from In to StdIn */<br />
+    <br />
+   /**<br />
+     * Close the input stream.<br />
+     */<br />
+    public void close() {<br />
+        scanner.close();  <br />
+    }<br />
+<br />
+    /**<br />
+     * Reads all ints from a file.<br />
+     * @deprecated Clearer to use <br />
+     * &lt;tt&gt;new In(filename)&lt;/tt&gt;.{@link #readAllInts()}<br />
+     */<br />
+    public static int[] readInts(String filename) {<br />
+        return new In(filename).readAllInts();<br />
+    }<br />
+<br />
+   /**<br />
+     * Reads all doubles from a file.<br />
+     * @deprecated Clearer to use <br />
+     * &lt;tt&gt;new In(filename)&lt;/tt&gt;.{@link #readAllDoubles()}<br />
+     */<br />
+    public static double[] readDoubles(String filename) {<br />
+        return new In(filename).readAllDoubles();<br />
+    }<br />
+<br />
+   /**<br />
+     * Reads all strings from a file.<br />
+     * @deprecated Clearer to use <br />
+     * &lt;tt&gt;new In(filename)&lt;/tt&gt;.{@link #readAllStrings()}<br />
+     */<br />
+    public static String[] readStrings(String filename) {<br />
+        return new In(filename).readAllStrings();<br />
+    }<br />
+<br />
+    /**<br />
+     * Reads all ints from standard input.<br />
+     * @deprecated Clearer to use {@link StdIn#readAllInts()}<br />
+     */<br />
+    public static int[] readInts() {<br />
+        return new In().readAllInts();<br />
+    }<br />
+<br />
+   /**<br />
+     * Reads all doubles from standard input.<br />
+     * @deprecated Clearer to use {@link StdIn#readAllDoubles()}<br />
+     */<br />
+    public static double[] readDoubles() {<br />
+        return new In().readAllDoubles();<br />
+    }<br />
+<br />
+   /**<br />
+     * Reads all strings from standard input.<br />
+     * @deprecated Clearer to use {@link StdIn#readAllStrings()}<br />
+     */<br />
+    public static String[] readStrings() {<br />
+        return new In().readAllStrings();<br />
+    }<br />
+    <br />
+   /**<br />
+     * Test client.<br />
+     */<br />
+    public static void main(String[] args) {<br />
+        In in;<br />
+        String urlName = &quot;http://introcs.cs.princeton.edu/stdlib/InTest.txt&quot;;<br />
+<br />
+        // read from a URL<br />
+        System.out.println(&quot;readAll() from URL &quot; + urlName);<br />
+        System.out.println(&quot;---------------------------------------------------------------------------&quot;);<br />
+        try {<br />
+            in = new In(urlName);<br />
+            System.out.println(in.readAll());<br />
+        }<br />
+        catch (Exception e) {<br />
+            System.out.println(e);<br />
+        }<br />
+        System.out.println();<br />
+<br />
+        // read one line at a time from URL<br />
+        System.out.println(&quot;readLine() from URL &quot; + urlName);<br />
+        System.out.println(&quot;---------------------------------------------------------------------------&quot;);<br />
+        try {<br />
+            in = new In(urlName);<br />
+            while (!in.isEmpty()) {<br />
+                String s = in.readLine();<br />
+                System.out.println(s);<br />
+            }<br />
+        }<br />
+        catch (Exception e) {<br />
+            System.out.println(e);<br />
+        }<br />
+        System.out.println();<br />
+<br />
+        // read one string at a time from URL<br />
+        System.out.println(&quot;readString() from URL &quot; + urlName);<br />
+        System.out.println(&quot;---------------------------------------------------------------------------&quot;);<br />
+        try {<br />
+            in = new In(urlName);<br />
+            while (!in.isEmpty()) {<br />
+                String s = in.readString();<br />
+                System.out.println(s);<br />
+            }<br />
+        }<br />
+        catch (Exception e) {<br />
+            System.out.println(e);<br />
+        }<br />
+        System.out.println();<br />
+<br />
+<br />
+        // read one line at a time from file in current directory<br />
+        System.out.println(&quot;readLine() from current directory&quot;);<br />
+        System.out.println(&quot;---------------------------------------------------------------------------&quot;);<br />
+        try {<br />
+            in = new In(&quot;./InTest.txt&quot;);<br />
+            while (!in.isEmpty()) {<br />
+                String s = in.readLine();<br />
+                System.out.println(s);<br />
+            }<br />
+        }<br />
+        catch (Exception e) {<br />
+            System.out.println(e);<br />
+        }<br />
+        System.out.println();<br />
+<br />
+<br />
+        // read one line at a time from file using relative path<br />
+        System.out.println(&quot;readLine() from relative path&quot;);<br />
+        System.out.println(&quot;---------------------------------------------------------------------------&quot;);<br />
+        try {<br />
+            in = new In(&quot;../stdlib/InTest.txt&quot;);<br />
+            while (!in.isEmpty()) {<br />
+                String s = in.readLine();<br />
+                System.out.println(s);<br />
+            }<br />
+        }<br />
+        catch (Exception e) {<br />
+            System.out.println(e);<br />
+        }<br />
+        System.out.println();<br />
+<br />
+        // read one char at a time<br />
+        System.out.println(&quot;readChar() from file&quot;);<br />
+        System.out.println(&quot;---------------------------------------------------------------------------&quot;);<br />
+        try {<br />
+            in = new In(&quot;InTest.txt&quot;);<br />
+            while (!in.isEmpty()) {<br />
+                char c = in.readChar();<br />
+                System.out.print(c);<br />
+            }<br />
+        }<br />
+        catch (Exception e) {<br />
+            System.out.println(e);<br />
+        }<br />
+        System.out.println();<br />
+        System.out.println();<br />
+<br />
+        // read one line at a time from absolute OS X / Linux path<br />
+        System.out.println(&quot;readLine() from absolute OS X / Linux path&quot;);<br />
+        System.out.println(&quot;---------------------------------------------------------------------------&quot;);<br />
+        in = new In(&quot;/n/fs/introcs/www/java/stdlib/InTest.txt&quot;);<br />
+        try {<br />
+            while (!in.isEmpty()) {<br />
+                String s = in.readLine();<br />
+                System.out.println(s);<br />
+            }<br />
+        }<br />
+        catch (Exception e) {<br />
+            System.out.println(e);<br />
+        }<br />
+        System.out.println();<br />
+<br />
+<br />
+        // read one line at a time from absolute Windows path<br />
+        System.out.println(&quot;readLine() from absolute Windows path&quot;);<br />
+        System.out.println(&quot;---------------------------------------------------------------------------&quot;);<br />
+        try {<br />
+            in = new In(&quot;G:wwwintrocsstdlibInTest.txt&quot;);<br />
+            while (!in.isEmpty()) {<br />
+                String s = in.readLine();<br />
+                System.out.println(s);<br />
+            }<br />
+            System.out.println();<br />
+        }<br />
+        catch (Exception e) {<br />
+            System.out.println(e);<br />
+        }<br />
+        System.out.println();<br />
+<br />
+    }<br />
+<br />
 }
 "
 
 
 "
-/*************************************************************************
- *  Compilation:  javac StdIn.java
- *  Execution:    java StdIn   (interactive test of basic functionality)
- *  Dependencies: none
- *
- *  Reads in data of various types from standard input.
- *
- *************************************************************************/
-
-import java.util.ArrayList;
-import java.util.InputMismatchException;
-import java.util.Locale;
-import java.util.NoSuchElementException;
-import java.util.Scanner;
-import java.util.regex.Pattern;
-
-/**
- *  The <tt>StdIn</tt> class provides static methods for reading strings
- *  and numbers from standard input. See 
- *  <a href="http://introcs.cs.princeton.edu/15inout">Section 1.5</a> of
- *  <i>Introduction to Programming in Java: An Interdisciplinary Approach</i>
- *  by Robert Sedgewick and Kevin Wayne.
- *  <p>
- *  For uniformity across platforms, this class uses <tt>Locale.US</tt>
- *  for the locale and <tt>"UTF-8"</tt> for the character-set encoding.
- *  The English language locale is consistent with the formatting conventions
- *  for Java floating-point literals, command-line arguments
- *  (via {@link Double#parseDouble(String)}) and standard output.
- *  <p>
- *  Like {@link Scanner}, reading a <em>token</em> also consumes preceding Java
- *  whitespace; reading a line consumes the following end-of-line
- *  delimeter; reading a character consumes nothing extra. 
- *  <p>
- *  Whitespace is defined in {@link Character#isWhitespace(char)}. Newlines
- *  consist of \n, \r, \r\n, and Unicode hex code points 0x2028, 0x2029, 0x0085;
- *  see <tt><a href="http://www.docjar.com/html/api/java/util/Scanner.java.html">
- *  Scanner.java</a></tt> (NB: Java 6u23 and earlier uses only \r, \r, \r\n).
- *  <p>
- *  See {@link In} for a version that handles input from files, URLs,
- *  and sockets.
- *  <p>
- *  Note that Java's UTF-8 encoding does not recognize the optional byte-order
- *  mask. If the input begins with the optional byte-order mask, <tt>StdIn</tt>
- *  will have an extra character <tt>uFEFF</tt> at the beginning.
- *  For details, see http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4508058.
- *
- *  @author David Pritchard
- *  @author Robert Sedgewick
- *  @author Kevin Wayne
- */
-public final class StdIn {
-
-    /*** begin: section (1 of 2) of code duplicated from In to StdIn. */
-    
-    // assume Unicode UTF-8 encoding
-    private static final String CHARSET_NAME = "UTF-8";
-
-    // assume language = English, country = US for consistency with System.out.
-    private static final Locale LOCALE = Locale.US;
-
-    // the default token separator; we maintain the invariant that this value
-    // is held by the scanner's delimiter between calls
-    private static final Pattern WHITESPACE_PATTERN = Pattern.compile("\\p{javaWhitespace}+");
-
-    // makes whitespace characters significant
-    private static final Pattern EMPTY_PATTERN = Pattern.compile("");
-
-    // used to read the entire input
-    private static final Pattern EVERYTHING_PATTERN = Pattern.compile("\\A");
-
-    /*** end: section (1 of 2) of code duplicated from In to StdIn. */
-
-    private static Scanner scanner;
- 
-    // it doesn't make sense to instantiate this class
-    private StdIn() { }
-
-    /*** begin: section (2 of 2) of code duplicated from In to StdIn,
-      *  with all methods changed from "public" to "public static" ***/
-
-   /**
-     * Is the input empty (except possibly for whitespace)? Use this
-     * to know whether the next call to {@link #readString()}, 
-     * {@link #readDouble()}, etc will succeed.
-     * @return true if standard input is empty (except possibly
-     *     for whitespae), and false otherwise
-     */
-    public static boolean isEmpty() {
-        return !scanner.hasNext();
-    }
-
-   /**
-     * Does the input have a next line? Use this to know whether the
-     * next call to {@link #readLine()} will succeed. <p> Functionally
-     * equivalent to {@link #hasNextChar()}.
-     * @return true if standard input is empty, and false otherwise
-     */
-    public static boolean hasNextLine() {
-        return scanner.hasNextLine();
-    }
-
-    /**
-     * Is the input empty (including whitespace)? Use this to know 
-     * whether the next call to {@link #readChar()} will succeed.
-     * <p>Functionally equivalent to {@link #hasNextLine()}.
-     * @return true if standard input is empty, and false otherwise
-     */
-    public static boolean hasNextChar() {
-        scanner.useDelimiter(EMPTY_PATTERN);
-        boolean result = scanner.hasNext();
-        scanner.useDelimiter(WHITESPACE_PATTERN);
-        return result;
-    }
-
-
-   /**
-     * Reads and returns the next line, excluding the line separator if present.
-     * @return the next line, excluding the line separator if present
-     */
-    public static String readLine() {
-        String line;
-        try {
-            line = scanner.nextLine();
-        }
-        catch (NoSuchElementException e) {
-            line = null;
-        }
-        return line;
-    }
-
-    /**
-     * Reads and returns the next character.
-     * @return the next character
-     */
-    public static char readChar() {
-        scanner.useDelimiter(EMPTY_PATTERN);
-        String ch = scanner.next();
-        assert (ch.length() == 1) : "Internal (Std)In.readChar() error!"
-            + " Please contact the authors.";
-        scanner.useDelimiter(WHITESPACE_PATTERN);
-        return ch.charAt(0);
-    }  
-
-
-   /**
-     * Reads and returns the remainder of the input, as a string.
-     * @return the remainder of the input, as a string
-     */
-    public static String readAll() {
-        if (!scanner.hasNextLine())
-            return "";
-
-        String result = scanner.useDelimiter(EVERYTHING_PATTERN).next();
-        // not that important to reset delimeter, since now scanner is empty
-        scanner.useDelimiter(WHITESPACE_PATTERN); // but let's do it anyway
-        return result;
-    }
-
-
-   /**
-     * Reads the next token  and returns the <tt>String</tt>.
-     * @return the next <tt>String</tt>
-     */
-    public static String readString() {
-        return scanner.next();
-    }
-
-   /**
-     * Reads the next token from standard input, parses it as an integer, and returns the integer.
-     * @return the next integer on standard input
-     * @throws InputMismatchException if the next token cannot be parsed as an <tt>int</tt>
-     */
-    public static int readInt() {
-        return scanner.nextInt();
-    }
-
-   /**
-     * Reads the next token from standard input, parses it as a double, and returns the double.
-     * @return the next double on standard input
-     * @throws InputMismatchException if the next token cannot be parsed as a <tt>double</tt>
-     */
-    public static double readDouble() {
-        return scanner.nextDouble();
-    }
-
-   /**
-     * Reads the next token from standard input, parses it as a float, and returns the float.
-     * @return the next float on standard input
-     * @throws InputMismatchException if the next token cannot be parsed as a <tt>float</tt>
-     */
-    public static float readFloat() {
-        return scanner.nextFloat();
-    }
-
-   /**
-     * Reads the next token from standard input, parses it as a long integer, and returns the long integer.
-     * @return the next long integer on standard input
-     * @throws InputMismatchException if the next token cannot be parsed as a <tt>long</tt>
-     */
-    public static long readLong() {
-        return scanner.nextLong();
-    }
-
-   /**
-     * Reads the next token from standard input, parses it as a short integer, and returns the short integer.
-     * @return the next short integer on standard input
-     * @throws InputMismatchException if the next token cannot be parsed as a <tt>short</tt>
-     */
-    public static short readShort() {
-        return scanner.nextShort();
-    }
-
-   /**
-     * Reads the next token from standard input, parses it as a byte, and returns the byte.
-     * @return the next byte on standard input
-     * @throws InputMismatchException if the next token cannot be parsed as a <tt>byte</tt>
-     */
-    public static byte readByte() {
-        return scanner.nextByte();
-    }
-
-    /**
-     * Reads the next token from standard input, parses it as a boolean,
-     * and returns the boolean.
-     * @return the next boolean on standard input
-     * @throws InputMismatchException if the next token cannot be parsed as a <tt>boolean</tt>:
-     *    <tt>true</tt> or <tt>1</tt> for true, and <tt>false</tt> or <tt>0</tt> for false,
-     *    ignoring case
-     */
-    public static boolean readBoolean() {
-        String s = readString();
-        if (s.equalsIgnoreCase("true"))  return true;
-        if (s.equalsIgnoreCase("false")) return false;
-        if (s.equals("1"))               return true;
-        if (s.equals("0"))               return false;
-        throw new InputMismatchException();
-    }
-
-    /**
-     * Reads all remaining tokens from standard input and returns them as an array of strings.
-     * @return all remaining tokens on standard input, as an array of strings
-     */
-    public static String[] readAllStrings() {
-        // we could use readAll.trim().split(), but that's not consistent
-        // because trim() uses characters 0x00..0x20 as whitespace
-        String[] tokens = WHITESPACE_PATTERN.split(readAll());
-        if (tokens.length == 0 || tokens[0].length() > 0)
-            return tokens;
-
-        // don't include first token if it is leading whitespace
-        String[] decapitokens = new String[tokens.length-1];
-        for (int i = 0; i < tokens.length - 1; i++)
-            decapitokens[i] = tokens[i+1];
-        return decapitokens;
-    }
-
-    /**
-     * Reads all remaining lines from standard input and returns them as an array of strings.
-     * @return all remaining lines on standard input, as an array of strings
-     */
-    public static String[] readAllLines() {
-        ArrayList<String> lines = new ArrayList<String>();
-        while (hasNextLine()) {
-            lines.add(readLine());
-        }
-        return lines.toArray(new String[0]);
-    }
-
-    /**
-     * Reads all remaining tokens from standard input, parses them as integers, and returns
-     * them as an array of integers.
-     * @return all remaining integers on standard input, as an array
-     * @throws InputMismatchException if any token cannot be parsed as an <tt>int</tt>
-     */
-    public static int[] readAllInts() {
-        String[] fields = readAllStrings();
-        int[] vals = new int[fields.length];
-        for (int i = 0; i < fields.length; i++)
-            vals[i] = Integer.parseInt(fields[i]);
-        return vals;
-    }
-
-    /**
-     * Reads all remaining tokens from standard input, parses them as doubles, and returns
-     * them as an array of doubles.
-     * @return all remaining doubles on standard input, as an array
-     * @throws InputMismatchException if any token cannot be parsed as a <tt>double</tt>
-     */
-    public static double[] readAllDoubles() {
-        String[] fields = readAllStrings();
-        double[] vals = new double[fields.length];
-        for (int i = 0; i < fields.length; i++)
-            vals[i] = Double.parseDouble(fields[i]);
-        return vals;
-    }
-    
-    /*** end: section (2 of 2) of code duplicated from In to StdIn */
-    
-    
-    // do this once when StdIn is initialized
-    static {
-        resync();
-    }
-
-    /**
-     * If StdIn changes, use this to reinitialize the scanner.
-     */
-    private static void resync() {
-        setScanner(new Scanner(new java.io.BufferedInputStream(System.in), CHARSET_NAME));
-    }
-    
-    private static void setScanner(Scanner scanner) {
-        StdIn.scanner = scanner;
-        StdIn.scanner.useLocale(LOCALE);
-    }
-
-   /**
-     * Reads all remaining tokens, parses them as integers, and returns
-     * them as an array of integers.
-     * @return all remaining integers, as an array
-     * @throws InputMismatchException if any token cannot be parsed as an <tt>int</tt>
-     * @deprecated For more consistency, use {@link #readAllInts()}
-     */
-    public static int[] readInts() {
-        return readAllInts();
-    }
-
-   /**
-     * Reads all remaining tokens, parses them as doubles, and returns
-     * them as an array of doubles.
-     * @return all remaining doubles, as an array
-     * @throws InputMismatchException if any token cannot be parsed as a <tt>double</tt>
-     * @deprecated For more consistency, use {@link #readAllDoubles()}
-     */
-    public static double[] readDoubles() {
-        return readAllDoubles();
-    }
-
-   /**
-     * Reads all remaining tokens and returns them as an array of strings.
-     * @return all remaining tokens, as an array of strings
-     * @deprecated For more consistency, use {@link #readAllStrings()}
-     */
-    public static String[] readStrings() {
-        return readAllStrings();
-    }
-
-
-    /**
-     * Interactive test of basic functionality.
-     */
-    public static void main(String[] args) {
-
-        System.out.println("Type a string: ");
-        String s = StdIn.readString();
-        System.out.println("Your string was: " + s);
-        System.out.println();
-
-        System.out.println("Type an int: ");
-        int a = StdIn.readInt();
-        System.out.println("Your int was: " + a);
-        System.out.println();
-
-        System.out.println("Type a boolean: ");
-        boolean b = StdIn.readBoolean();
-        System.out.println("Your boolean was: " + b);
-        System.out.println();
-
-        System.out.println("Type a double: ");
-        double c = StdIn.readDouble();
-        System.out.println("Your double was: " + c);
-        System.out.println();
-
-    }
-
+/*************************************************************************<br />
+ *  Compilation:  javac StdIn.java<br />
+ *  Execution:    java StdIn   (interactive test of basic functionality)<br />
+ *  Dependencies: none<br />
+ *<br />
+ *  Reads in data of various types from standard input.<br />
+ *<br />
+ *************************************************************************/<br />
+<br />
+import java.util.ArrayList;<br />
+import java.util.InputMismatchException;<br />
+import java.util.Locale;<br />
+import java.util.NoSuchElementException;<br />
+import java.util.Scanner;<br />
+import java.util.regex.Pattern;<br />
+<br />
+/**<br />
+ *  The &lt;tt&gt;StdIn&lt;/tt&gt; class provides static methods for reading strings<br />
+ *  and numbers from standard input. See <br />
+ *  &lt;a href=&quot;http://introcs.cs.princeton.edu/15inout&quot;&gt;Section 1.5&lt;/a&gt; of<br />
+ *  &lt;i&gt;Introduction to Programming in Java: An Interdisciplinary Approach&lt;/i&gt;<br />
+ *  by Robert Sedgewick and Kevin Wayne.<br />
+ *  &lt;p&gt;<br />
+ *  For uniformity across platforms, this class uses &lt;tt&gt;Locale.US&lt;/tt&gt;<br />
+ *  for the locale and &lt;tt&gt;&quot;UTF-8&quot;&lt;/tt&gt; for the character-set encoding.<br />
+ *  The English language locale is consistent with the formatting conventions<br />
+ *  for Java floating-point literals, command-line arguments<br />
+ *  (via {@link Double#parseDouble(String)}) and standard output.<br />
+ *  &lt;p&gt;<br />
+ *  Like {@link Scanner}, reading a &lt;em&gt;token&lt;/em&gt; also consumes preceding Java<br />
+ *  whitespace; reading a line consumes the following end-of-line<br />
+ *  delimeter; reading a character consumes nothing extra. <br />
+ *  &lt;p&gt;<br />
+ *  Whitespace is defined in {@link Character#isWhitespace(char)}. Newlines<br />
+ *  consist of n, r, rn, and Unicode hex code points 0x2028, 0x2029, 0x0085;<br />
+ *  see &lt;tt&gt;&lt;a href=&quot;http://www.docjar.com/html/api/java/util/Scanner.java.html&quot;&gt;<br />
+ *  Scanner.java&lt;/a&gt;&lt;/tt&gt; (NB: Java 6u23 and earlier uses only r, r, rn).<br />
+ *  &lt;p&gt;<br />
+ *  See {@link In} for a version that handles input from files, URLs,<br />
+ *  and sockets.<br />
+ *  &lt;p&gt;<br />
+ *  Note that Java's UTF-8 encoding does not recognize the optional byte-order<br />
+ *  mask. If the input begins with the optional byte-order mask, &lt;tt&gt;StdIn&lt;/tt&gt;<br />
+ *  will have an extra character &lt;tt&gt;uFEFF&lt;/tt&gt; at the beginning.<br />
+ *  For details, see http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4508058.<br />
+ *<br />
+ *  @author David Pritchard<br />
+ *  @author Robert Sedgewick<br />
+ *  @author Kevin Wayne<br />
+ */<br />
+public final class StdIn {<br />
+<br />
+    /*** begin: section (1 of 2) of code duplicated from In to StdIn. */<br />
+    <br />
+    // assume Unicode UTF-8 encoding<br />
+    private static final String CHARSET_NAME = &quot;UTF-8&quot;;<br />
+<br />
+    // assume language = English, country = US for consistency with System.out.<br />
+    private static final Locale LOCALE = Locale.US;<br />
+<br />
+    // the default token separator; we maintain the invariant that this value<br />
+    // is held by the scanner's delimiter between calls<br />
+    private static final Pattern WHITESPACE_PATTERN = Pattern.compile(&quot;p{javaWhitespace}+&quot;);<br />
+<br />
+    // makes whitespace characters significant<br />
+    private static final Pattern EMPTY_PATTERN = Pattern.compile(&quot;&quot;);<br />
+<br />
+    // used to read the entire input<br />
+    private static final Pattern EVERYTHING_PATTERN = Pattern.compile(&quot;A&quot;);<br />
+<br />
+    /*** end: section (1 of 2) of code duplicated from In to StdIn. */<br />
+<br />
+    private static Scanner scanner;<br />
+ <br />
+    // it doesn't make sense to instantiate this class<br />
+    private StdIn() { }<br />
+<br />
+    /*** begin: section (2 of 2) of code duplicated from In to StdIn,<br />
+      *  with all methods changed from &quot;public&quot; to &quot;public static&quot; ***/<br />
+<br />
+   /**<br />
+     * Is the input empty (except possibly for whitespace)? Use this<br />
+     * to know whether the next call to {@link #readString()}, <br />
+     * {@link #readDouble()}, etc will succeed.<br />
+     * @return true if standard input is empty (except possibly<br />
+     *     for whitespae), and false otherwise<br />
+     */<br />
+    public static boolean isEmpty() {<br />
+        return !scanner.hasNext();<br />
+    }<br />
+<br />
+   /**<br />
+     * Does the input have a next line? Use this to know whether the<br />
+     * next call to {@link #readLine()} will succeed. &lt;p&gt; Functionally<br />
+     * equivalent to {@link #hasNextChar()}.<br />
+     * @return true if standard input is empty, and false otherwise<br />
+     */<br />
+    public static boolean hasNextLine() {<br />
+        return scanner.hasNextLine();<br />
+    }<br />
+<br />
+    /**<br />
+     * Is the input empty (including whitespace)? Use this to know <br />
+     * whether the next call to {@link #readChar()} will succeed.<br />
+     * &lt;p&gt;Functionally equivalent to {@link #hasNextLine()}.<br />
+     * @return true if standard input is empty, and false otherwise<br />
+     */<br />
+    public static boolean hasNextChar() {<br />
+        scanner.useDelimiter(EMPTY_PATTERN);<br />
+        boolean result = scanner.hasNext();<br />
+        scanner.useDelimiter(WHITESPACE_PATTERN);<br />
+        return result;<br />
+    }<br />
+<br />
+<br />
+   /**<br />
+     * Reads and returns the next line, excluding the line separator if present.<br />
+     * @return the next line, excluding the line separator if present<br />
+     */<br />
+    public static String readLine() {<br />
+        String line;<br />
+        try {<br />
+            line = scanner.nextLine();<br />
+        }<br />
+        catch (NoSuchElementException e) {<br />
+            line = null;<br />
+        }<br />
+        return line;<br />
+    }<br />
+<br />
+    /**<br />
+     * Reads and returns the next character.<br />
+     * @return the next character<br />
+     */<br />
+    public static char readChar() {<br />
+        scanner.useDelimiter(EMPTY_PATTERN);<br />
+        String ch = scanner.next();<br />
+        assert (ch.length() == 1) : &quot;Internal (Std)In.readChar() error!&quot;<br />
+            + &quot; Please contact the authors.&quot;;<br />
+        scanner.useDelimiter(WHITESPACE_PATTERN);<br />
+        return ch.charAt(0);<br />
+    }  <br />
+<br />
+<br />
+   /**<br />
+     * Reads and returns the remainder of the input, as a string.<br />
+     * @return the remainder of the input, as a string<br />
+     */<br />
+    public static String readAll() {<br />
+        if (!scanner.hasNextLine())<br />
+            return &quot;&quot;;<br />
+<br />
+        String result = scanner.useDelimiter(EVERYTHING_PATTERN).next();<br />
+        // not that important to reset delimeter, since now scanner is empty<br />
+        scanner.useDelimiter(WHITESPACE_PATTERN); // but let's do it anyway<br />
+        return result;<br />
+    }<br />
+<br />
+<br />
+   /**<br />
+     * Reads the next token  and returns the &lt;tt&gt;String&lt;/tt&gt;.<br />
+     * @return the next &lt;tt&gt;String&lt;/tt&gt;<br />
+     */<br />
+    public static String readString() {<br />
+        return scanner.next();<br />
+    }<br />
+<br />
+   /**<br />
+     * Reads the next token from standard input, parses it as an integer, and returns the integer.<br />
+     * @return the next integer on standard input<br />
+     * @throws InputMismatchException if the next token cannot be parsed as an &lt;tt&gt;int&lt;/tt&gt;<br />
+     */<br />
+    public static int readInt() {<br />
+        return scanner.nextInt();<br />
+    }<br />
+<br />
+   /**<br />
+     * Reads the next token from standard input, parses it as a double, and returns the double.<br />
+     * @return the next double on standard input<br />
+     * @throws InputMismatchException if the next token cannot be parsed as a &lt;tt&gt;double&lt;/tt&gt;<br />
+     */<br />
+    public static double readDouble() {<br />
+        return scanner.nextDouble();<br />
+    }<br />
+<br />
+   /**<br />
+     * Reads the next token from standard input, parses it as a float, and returns the float.<br />
+     * @return the next float on standard input<br />
+     * @throws InputMismatchException if the next token cannot be parsed as a &lt;tt&gt;float&lt;/tt&gt;<br />
+     */<br />
+    public static float readFloat() {<br />
+        return scanner.nextFloat();<br />
+    }<br />
+<br />
+   /**<br />
+     * Reads the next token from standard input, parses it as a long integer, and returns the long integer.<br />
+     * @return the next long integer on standard input<br />
+     * @throws InputMismatchException if the next token cannot be parsed as a &lt;tt&gt;long&lt;/tt&gt;<br />
+     */<br />
+    public static long readLong() {<br />
+        return scanner.nextLong();<br />
+    }<br />
+<br />
+   /**<br />
+     * Reads the next token from standard input, parses it as a short integer, and returns the short integer.<br />
+     * @return the next short integer on standard input<br />
+     * @throws InputMismatchException if the next token cannot be parsed as a &lt;tt&gt;short&lt;/tt&gt;<br />
+     */<br />
+    public static short readShort() {<br />
+        return scanner.nextShort();<br />
+    }<br />
+<br />
+   /**<br />
+     * Reads the next token from standard input, parses it as a byte, and returns the byte.<br />
+     * @return the next byte on standard input<br />
+     * @throws InputMismatchException if the next token cannot be parsed as a &lt;tt&gt;byte&lt;/tt&gt;<br />
+     */<br />
+    public static byte readByte() {<br />
+        return scanner.nextByte();<br />
+    }<br />
+<br />
+    /**<br />
+     * Reads the next token from standard input, parses it as a boolean,<br />
+     * and returns the boolean.<br />
+     * @return the next boolean on standard input<br />
+     * @throws InputMismatchException if the next token cannot be parsed as a &lt;tt&gt;boolean&lt;/tt&gt;:<br />
+     *    &lt;tt&gt;true&lt;/tt&gt; or &lt;tt&gt;1&lt;/tt&gt; for true, and &lt;tt&gt;false&lt;/tt&gt; or &lt;tt&gt;0&lt;/tt&gt; for false,<br />
+     *    ignoring case<br />
+     */<br />
+    public static boolean readBoolean() {<br />
+        String s = readString();<br />
+        if (s.equalsIgnoreCase(&quot;true&quot;))  return true;<br />
+        if (s.equalsIgnoreCase(&quot;false&quot;)) return false;<br />
+        if (s.equals(&quot;1&quot;))               return true;<br />
+        if (s.equals(&quot;0&quot;))               return false;<br />
+        throw new InputMismatchException();<br />
+    }<br />
+<br />
+    /**<br />
+     * Reads all remaining tokens from standard input and returns them as an array of strings.<br />
+     * @return all remaining tokens on standard input, as an array of strings<br />
+     */<br />
+    public static String[] readAllStrings() {<br />
+        // we could use readAll.trim().split(), but that's not consistent<br />
+        // because trim() uses characters 0x00..0x20 as whitespace<br />
+        String[] tokens = WHITESPACE_PATTERN.split(readAll());<br />
+        if (tokens.length == 0 || tokens[0].length() &gt; 0)<br />
+            return tokens;<br />
+<br />
+        // don't include first token if it is leading whitespace<br />
+        String[] decapitokens = new String[tokens.length-1];<br />
+        for (int i = 0; i &lt; tokens.length - 1; i++)<br />
+            decapitokens[i] = tokens[i+1];<br />
+        return decapitokens;<br />
+    }<br />
+<br />
+    /**<br />
+     * Reads all remaining lines from standard input and returns them as an array of strings.<br />
+     * @return all remaining lines on standard input, as an array of strings<br />
+     */<br />
+    public static String[] readAllLines() {<br />
+        ArrayList&lt;String&gt; lines = new ArrayList&lt;String&gt;();<br />
+        while (hasNextLine()) {<br />
+            lines.add(readLine());<br />
+        }<br />
+        return lines.toArray(new String[0]);<br />
+    }<br />
+<br />
+    /**<br />
+     * Reads all remaining tokens from standard input, parses them as integers, and returns<br />
+     * them as an array of integers.<br />
+     * @return all remaining integers on standard input, as an array<br />
+     * @throws InputMismatchException if any token cannot be parsed as an &lt;tt&gt;int&lt;/tt&gt;<br />
+     */<br />
+    public static int[] readAllInts() {<br />
+        String[] fields = readAllStrings();<br />
+        int[] vals = new int[fields.length];<br />
+        for (int i = 0; i &lt; fields.length; i++)<br />
+            vals[i] = Integer.parseInt(fields[i]);<br />
+        return vals;<br />
+    }<br />
+<br />
+    /**<br />
+     * Reads all remaining tokens from standard input, parses them as doubles, and returns<br />
+     * them as an array of doubles.<br />
+     * @return all remaining doubles on standard input, as an array<br />
+     * @throws InputMismatchException if any token cannot be parsed as a &lt;tt&gt;double&lt;/tt&gt;<br />
+     */<br />
+    public static double[] readAllDoubles() {<br />
+        String[] fields = readAllStrings();<br />
+        double[] vals = new double[fields.length];<br />
+        for (int i = 0; i &lt; fields.length; i++)<br />
+            vals[i] = Double.parseDouble(fields[i]);<br />
+        return vals;<br />
+    }<br />
+    <br />
+    /*** end: section (2 of 2) of code duplicated from In to StdIn */<br />
+    <br />
+    <br />
+    // do this once when StdIn is initialized<br />
+    static {<br />
+        resync();<br />
+    }<br />
+<br />
+    /**<br />
+     * If StdIn changes, use this to reinitialize the scanner.<br />
+     */<br />
+    private static void resync() {<br />
+        setScanner(new Scanner(new java.io.BufferedInputStream(System.in), CHARSET_NAME));<br />
+    }<br />
+    <br />
+    private static void setScanner(Scanner scanner) {<br />
+        StdIn.scanner = scanner;<br />
+        StdIn.scanner.useLocale(LOCALE);<br />
+    }<br />
+<br />
+   /**<br />
+     * Reads all remaining tokens, parses them as integers, and returns<br />
+     * them as an array of integers.<br />
+     * @return all remaining integers, as an array<br />
+     * @throws InputMismatchException if any token cannot be parsed as an &lt;tt&gt;int&lt;/tt&gt;<br />
+     * @deprecated For more consistency, use {@link #readAllInts()}<br />
+     */<br />
+    public static int[] readInts() {<br />
+        return readAllInts();<br />
+    }<br />
+<br />
+   /**<br />
+     * Reads all remaining tokens, parses them as doubles, and returns<br />
+     * them as an array of doubles.<br />
+     * @return all remaining doubles, as an array<br />
+     * @throws InputMismatchException if any token cannot be parsed as a &lt;tt&gt;double&lt;/tt&gt;<br />
+     * @deprecated For more consistency, use {@link #readAllDoubles()}<br />
+     */<br />
+    public static double[] readDoubles() {<br />
+        return readAllDoubles();<br />
+    }<br />
+<br />
+   /**<br />
+     * Reads all remaining tokens and returns them as an array of strings.<br />
+     * @return all remaining tokens, as an array of strings<br />
+     * @deprecated For more consistency, use {@link #readAllStrings()}<br />
+     */<br />
+    public static String[] readStrings() {<br />
+        return readAllStrings();<br />
+    }<br />
+<br />
+<br />
+    /**<br />
+     * Interactive test of basic functionality.<br />
+     */<br />
+    public static void main(String[] args) {<br />
+<br />
+        System.out.println(&quot;Type a string: &quot;);<br />
+        String s = StdIn.readString();<br />
+        System.out.println(&quot;Your string was: &quot; + s);<br />
+        System.out.println();<br />
+<br />
+        System.out.println(&quot;Type an int: &quot;);<br />
+        int a = StdIn.readInt();<br />
+        System.out.println(&quot;Your int was: &quot; + a);<br />
+        System.out.println();<br />
+<br />
+        System.out.println(&quot;Type a boolean: &quot;);<br />
+        boolean b = StdIn.readBoolean();<br />
+        System.out.println(&quot;Your boolean was: &quot; + b);<br />
+        System.out.println();<br />
+<br />
+        System.out.println(&quot;Type a double: &quot;);<br />
+        double c = StdIn.readDouble();<br />
+        System.out.println(&quot;Your double was: &quot; + c);<br />
+        System.out.println();<br />
+<br />
+    }<br />
+<br />
 }"
 </body>
 </html>
